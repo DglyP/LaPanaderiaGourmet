@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor de Precios - La Panadería Gourmet</title>
+    <script src="data.js"></script>
     <style>
         * {
             margin: 0;
@@ -239,15 +240,15 @@
                 <div id="itemsContainer"></div>
 
                 <div class="controls">
-                    <button class="btn-download" onclick="downloadCSV()">⬇️ Descargar CSV Actualizado</button>
-                    <button class="btn-copy" onclick="copyCSVtoClipboard()">📋 Copiar al Portapapeles</button>
+                    <button class="btn-download" onclick="downloadData()">⬇️ Descargar data.js Actualizado</button>
+                    <button class="btn-copy" onclick="copyDataToClipboard()">📋 Copiar al Portapapeles</button>
                     <button class="btn-reset" onclick="resetPrices()">↻ Restaurar Original</button>
                 </div>
 
                 <div id="status" class="status"></div>
 
                 <div style="margin-top: 2rem;">
-                    <h3 style="color: #6b4423; margin-bottom: 1rem;">Vista Previa del CSV:</h3>
+                    <h3 style="color: #6b4423; margin-bottom: 1rem;">Vista Previa de data.js:</h3>
                     <div class="csv-preview" id="csvPreview">Cargando...</div>
                 </div>
             </div>
@@ -259,41 +260,18 @@
         let sectionOrder = [];
         let originalData = {};
 
-        async function loadMenu() {
+        function loadMenu() {
             try {
-                const response = await fetch('menu.csv');
-                const csvText = await response.text();
-                const lines = csvText.trim().split('\n');
-                
-                menuData = {};
-                sectionOrder = [];
-                
-                // Parse CSV (skip header)
-                for (let i = 1; i < lines.length; i++) {
-                    const parts = lines[i].split(',');
-                    if (parts.length < 4) continue;
-                    
-                    const section = parts[0].trim();
-                    const item = parts[1].trim();
-                    const description = parts[2].trim();
-                    const price = parts[3].trim();
-                    
-                    if (!menuData[section]) {
-                        menuData[section] = [];
-                        sectionOrder.push(section);
-                    }
-                    
-                    menuData[section].push({ item, description, price });
-                }
-
-                // Store original for reset
+                // Use global menuData and sectionOrder from data.js
+                menuData = JSON.parse(JSON.stringify(window.menuData));
+                sectionOrder = window.sectionOrder;
                 originalData = JSON.parse(JSON.stringify(menuData));
                 
                 renderItems();
-                updateCSVPreview();
+                updateDataPreview();
             } catch (error) {
                 console.error('Error loading menu:', error);
-                document.getElementById('itemsContainer').innerHTML = '<p style="color: red;">Error al cargar el menú. Verifica que menu.csv existe.</p>';
+                document.getElementById('itemsContainer').innerHTML = '<p style="color: red;">Error loading menu data from data.js</p>';
             }
         }
 
@@ -322,50 +300,35 @@
 
         function updatePrice(section, index, newPrice) {
             menuData[section][index].price = newPrice;
-            updateCSVPreview();
+            updateDataPreview();
         }
 
-        function updateCSVPreview() {
-            let csv = 'Section,Item,Description,Price\n';
-            
-            sectionOrder.forEach(section => {
-                menuData[section].forEach(item => {
-                    csv += `${section},${item.item},${item.description}, ${item.price}\n`;
-                });
-            });
-
-            document.getElementById('csvPreview').textContent = csv;
+        function updateDataPreview() {
+            let jsCode = 'const menuData = ' + JSON.stringify(menuData, null, 2) + ';\n\nconst sectionOrder = ' + JSON.stringify(sectionOrder) + ';';
+            document.getElementById('csvPreview').textContent = jsCode;
         }
 
-        function generateCSV() {
-            let csv = 'Section,Item,Description,Price\n';
-            
-            sectionOrder.forEach(section => {
-                menuData[section].forEach(item => {
-                    csv += `${section},${item.item},${item.description}, ${item.price}\n`;
-                });
-            });
-
-            return csv;
+        function generateData() {
+            return 'const menuData = ' + JSON.stringify(menuData, null, 2) + ';\n\nconst sectionOrder = ' + JSON.stringify(sectionOrder) + ';';
         }
 
-        function downloadCSV() {
-            const csv = generateCSV();
-            const blob = new Blob([csv], { type: 'text/csv' });
+        function downloadData() {
+            const data = generateData();
+            const blob = new Blob([data], { type: 'application/javascript' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'menu.csv';
+            a.download = 'data.js';
             a.click();
             window.URL.revokeObjectURL(url);
             
-            showStatus('✓ CSV descargado. Reemplaza el archivo en tu repositorio.', 'success');
+            showStatus('✓ data.js descargado. Reemplaza el archivo en tu repositorio.', 'success');
         }
 
-        function copyCSVtoClipboard() {
-            const csv = generateCSV();
-            navigator.clipboard.writeText(csv).then(() => {
-                showStatus('✓ CSV copiado al portapapeles.', 'success');
+        function copyDataToClipboard() {
+            const data = generateData();
+            navigator.clipboard.writeText(data).then(() => {
+                showStatus('✓ data.js copiado al portapapeles.', 'success');
             }).catch(err => {
                 console.error('Error al copiar:', err);
                 showStatus('✗ Error al copiar. Intenta descargar el archivo en su lugar.', 'error');
@@ -376,7 +339,7 @@
             if (confirm('¿Estás seguro? Esto restaurará todos los precios a sus valores originales.')) {
                 menuData = JSON.parse(JSON.stringify(originalData));
                 renderItems();
-                updateCSVPreview();
+                updateDataPreview();
                 showStatus('✓ Precios restaurados al original.', 'success');
             }
         }

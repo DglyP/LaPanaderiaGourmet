@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú - La Panadería Gourmet</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="data.js"></script>
     <style>
         body {
             background: linear-gradient(to bottom, #fef9f3 0%, #f5ebe0 100%);
@@ -243,30 +244,11 @@
     </div>
 
     <script>
-        async function loadMenu() {
+        function loadMenu() {
             try {
-                const response = await fetch('menu.csv');
-                const csvText = await response.text();
-                const lines = csvText.trim().split('\n');
-                
-                const menuData = {};
-                const sectionOrder = [];
-                
-                // Parse CSV
-                for (let i = 1; i < lines.length; i++) {
-                    const [section, item, description, price] = lines[i].split(',').map(s => s.trim());
-                    
-                    if (!menuData[section]) {
-                        menuData[section] = [];
-                        sectionOrder.push(section);
-                    }
-                    
-                    menuData[section].push({ item, description, price });
-                }
-                
-                // Render menu
-                const menuContent = document.getElementById('menuContent');
+                // Use global menuData and sectionOrder from data.js
                 const quickNav = document.getElementById('quickNav');
+                const menuContent = document.getElementById('menuContent');
                 const sectionIcons = {
                     'Desayunos': '🍳',
                     'Bebidas Calientes': '☕',

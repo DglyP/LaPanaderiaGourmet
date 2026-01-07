@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú - La Panadería Gourmet</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="data.js"></script>
     <style>
         body {
             background: white;
@@ -254,24 +255,7 @@
     <script>
         async function loadPrintMenu() {
             try {
-                const response = await fetch('menu.csv');
-                const csvText = await response.text();
-                const lines = csvText.trim().split('\n');
-                
-                const menuData = {};
-                const sectionOrder = [];
-                
-                // Parse CSV
-                for (let i = 1; i < lines.length; i++) {
-                    const [section, item, description, price] = lines[i].split(',').map(s => s.trim());
-                    
-                    if (!menuData[section]) {
-                        menuData[section] = [];
-                        sectionOrder.push(section);
-                    }
-                    
-                    menuData[section].push({ item, description, price });
-                }
+                // Menu data is now loaded from data.js (global menuData and sectionOrder)
                 
                 // Function to create a single menu container
                 function createMenuContainer() {
