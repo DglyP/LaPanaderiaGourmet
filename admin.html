@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Precios - La Panadería Gourmet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #fb9115 0%, #fb9115 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.95;
+            font-style: italic;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #f0e6d8;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table thead {
+            background: #f9f6f3;
+        }
+
+        .items-table th {
+            padding: 1rem;
+            text-align: left;
+            color: #6b4423;
+            font-weight: 600;
+            border-bottom: 2px solid #f0e6d8;
+        }
+
+        .items-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0e6d8;
+        }
+
+        .items-table tr:hover {
+            background: #fef9f3;
+        }
+
+        .items-table input[type="number"] {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #d4a574;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .items-table input[type="number"]:focus {
+            outline: none;
+            border-color: #fb9115;
+            box-shadow: 0 0 0 3px rgba(251, 145, 21, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f0e6d8;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #d4a574 0%, #c89666 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8d5c0 100%);
+            color: #6b4423;
+            border: 2px solid #d4a574;
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #e8d5c0 0%, #dcc9b8 100%);
+        }
+
+        .btn-reset {
+            background: #ddd;
+            color: #555;
+        }
+
+        .btn-reset:hover {
+            background: #ccc;
+        }
+
+        .csv-preview {
+            background: #f9f6f3;
+            border: 1px solid #d4a574;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #555;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            background: #f0e6d8;
+            color: #6b4423;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #e8d5c0;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .items-table {
+                font-size: 0.9rem;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Editor de Precios</h1>
+            <p>La Panadería Gourmet</p>
+        </header>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Volver al inicio</a>
+
+            <div class="section">
+                <h2>Editar Precios</h2>
+                <p style="margin-bottom: 1.5rem; color: #666;">Modifica los precios a continuación y descarga el archivo actualizado para reemplazar `menu.csv` en tu repositorio.</p>
+                
+                <div id="itemsContainer"></div>
+
+                <div class="controls">
+                    <button class="btn-download" onclick="downloadCSV()">⬇️ Descargar CSV Actualizado</button>
+                    <button class="btn-copy" onclick="copyCSVtoClipboard()">📋 Copiar al Portapapeles</button>
+                    <button class="btn-reset" onclick="resetPrices()">↻ Restaurar Original</button>
+                </div>
+
+                <div id="status" class="status"></div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: #6b4423; margin-bottom: 1rem;">Vista Previa del CSV:</h3>
+                    <div class="csv-preview" id="csvPreview">Cargando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let menuData = {};
+        let sectionOrder = [];
+        let originalData = {};
+
+        async function loadMenu() {
+            try {
+                const response = await fetch('menu.csv');
+                const csvText = await response.text();
+                const lines = csvText.trim().split('\n');
+                
+                menuData = {};
+                sectionOrder = [];
+                
+                // Parse CSV (skip header)
+                for (let i = 1; i < lines.length; i++) {
+                    const parts = lines[i].split(',');
+                    if (parts.length < 4) continue;
+                    
+                    const section = parts[0].trim();
+                    const item = parts[1].trim();
+                    const description = parts[2].trim();
+                    const price = parts[3].trim();
+                    
+                    if (!menuData[section]) {
+                        menuData[section] = [];
+                        sectionOrder.push(section);
+                    }
+                    
+                    menuData[section].push({ item, description, price });
+                }
+
+                // Store original for reset
+                originalData = JSON.parse(JSON.stringify(menuData));
+                
+                renderItems();
+                updateCSVPreview();
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                document.getElementById('itemsContainer').innerHTML = '<p style="color: red;">Error al cargar el menú. Verifica que menu.csv existe.</p>';
+            }
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            let html = '';
+
+            sectionOrder.forEach(section => {
+                html += `<div class="section"><h2>${section}</h2><table class="items-table"><thead><tr><th>Artículo</th><th>Descripción</th><th>Precio</th></tr></thead><tbody>`;
+                
+                menuData[section].forEach((item, index) => {
+                    html += `
+                        <tr>
+                            <td>${item.item}</td>
+                            <td>${item.description}</td>
+                            <td><input type="number" value="${item.price}" step="0.01" onchange="updatePrice('${section}', ${index}, this.value)" /></td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updatePrice(section, index, newPrice) {
+            menuData[section][index].price = newPrice;
+            updateCSVPreview();
+        }
+
+        function updateCSVPreview() {
+            let csv = 'Section,Item,Description,Price\n';
+            
+            sectionOrder.forEach(section => {
+                menuData[section].forEach(item => {
+                    csv += `${section},${item.item},${item.description}, ${item.price}\n`;
+                });
+            });
+
+            document.getElementById('csvPreview').textContent = csv;
+        }
+
+        function generateCSV() {
+            let csv = 'Section,Item,Description,Price\n';
+            
+            sectionOrder.forEach(section => {
+                menuData[section].forEach(item => {
+                    csv += `${section},${item.item},${item.description}, ${item.price}\n`;
+                });
+            });
+
+            return csv;
+        }
+
+        function downloadCSV() {
+            const csv = generateCSV();
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'menu.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showStatus('✓ CSV descargado. Reemplaza el archivo en tu repositorio.', 'success');
+        }
+
+        function copyCSVtoClipboard() {
+            const csv = generateCSV();
+            navigator.clipboard.writeText(csv).then(() => {
+                showStatus('✓ CSV copiado al portapapeles.', 'success');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                showStatus('✗ Error al copiar. Intenta descargar el archivo en su lugar.', 'error');
+            });
+        }
+
+        function resetPrices() {
+            if (confirm('¿Estás seguro? Esto restaurará todos los precios a sus valores originales.')) {
+                menuData = JSON.parse(JSON.stringify(originalData));
+                renderItems();
+                updateCSVPreview();
+                showStatus('✓ Precios restaurados al original.', 'success');
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            setTimeout(() => {
+                status.className = 'status';
+            }, 4000);
+        }
+
+        loadMenu();
+    </script>
+</body>
+</html>
