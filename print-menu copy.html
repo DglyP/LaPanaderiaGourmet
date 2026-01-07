@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú - La Panadería Gourmet</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: white;
+            padding: 0;
+            margin: 0;
+        }
+
+        .page-wrapper {
+            display: flex;
+            gap: 8mm;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+            width: 100%;
+        }
+
+        .print-container {
+            box-sizing: border-box;
+            flex: 1 1 calc((100% - 8mm) / 2);
+            max-width: 148mm; /* A5 width */
+            height: 210mm; /* A5 height */
+            padding: 6mm;
+            border: 2px solid #000;
+            background: white;
+            box-shadow: 0 0 0 1mm #000 inset; /* flyer-like inner frame */
+            page-break-inside: avoid;
+            overflow: hidden; /* keep content within the border */
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 5mm;
+            border-bottom: 0.3mm solid #000;
+            padding-bottom: 2mm;
+        }
+
+        header h1 {
+            font-size: 5.5mm;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2mm;
+            margin-bottom: 0.8mm;
+        }
+
+        header p {
+            font-size: 3.3mm;
+            font-style: italic;
+            letter-spacing: 0.2mm;
+        }
+
+        header img {
+            width: 32mm;
+            height: auto;
+            display: block;
+            margin: 0 auto 2mm;
+        }
+
+        main {
+            margin-top: 0;
+            width: 100%;
+        }
+
+        /* Two-column layout inside each A5 menu */
+        .columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 8mm;
+            row-gap: 4mm;
+        }
+        .col {
+            display: block;
+            break-inside: avoid;
+        }
+
+        section {
+            margin-bottom: 4.5mm;
+            break-inside: avoid;
+        }
+
+        section h2 {
+            font-size: 4.3mm;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 0.25mm solid #000;
+            padding-bottom: 2mm;
+            margin-bottom: 2.5mm;
+            letter-spacing: 0.2mm;
+        }
+
+        .menu-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
+            row-gap: 1.2mm;
+            margin-bottom: 2.2mm;
+            position: relative;
+        }
+
+        .item-name {
+            grid-column: 1;
+            grid-row: 1;
+            background: white;
+            padding-right: 2mm;
+            font-size: 3.9mm;
+            font-weight: 500;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            position: relative;
+        }
+
+        .item-description {
+            font-size: 3.1mm;
+            color: #555;
+            font-style: italic;
+        }
+
+        .dots {
+            grid-column: 1 / -1;
+            grid-row: 1; /* move to baseline of row */
+            align-self: end;
+            border-bottom: 0.2mm dotted #bbb;
+            margin: 0;
+            height: 0;
+            z-index: 0;
+        }
+
+        .item-price {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: end;
+            background: white;
+            padding-left: 2mm;
+            font-weight: 700;
+            font-size: 3.9mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-placeholder {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 0.8rem;
+            border-top: 2px solid #000;
+        }
+
+        .back-link a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Print Optimization */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 8mm; /* add printer margins */
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+
+            .page-wrapper {
+                gap: 5mm; /* leave space between the two A5s */
+                padding: 0;
+                page-break-inside: avoid;
+                justify-content: center;
+                align-items: flex-start;
+            }
+
+            .print-container {
+                box-sizing: border-box;
+                border: 0.25mm solid #000;
+                padding: 4mm;
+                box-shadow: 0 0 0 0.6mm #000 inset;
+                page-break-inside: avoid;
+                width: 138mm; /* scaled A5 width to fit margins */
+                height: 194mm; /* scaled A5 height to fit margins */
+                flex: 0 0 138mm;
+                overflow: hidden;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper" id="pageWrapper"></div>
+
+    <script>
+        async function loadPrintMenu() {
+            try {
+                const response = await fetch('menu.csv');
+                const csvText = await response.text();
+                const lines = csvText.trim().split('\n');
+                
+                const menuData = {};
+                const sectionOrder = [];
+                
+                // Parse CSV
+                for (let i = 1; i < lines.length; i++) {
+                    const [section, item, description, price] = lines[i].split(',').map(s => s.trim());
+                    
+                    if (!menuData[section]) {
+                        menuData[section] = [];
+                        sectionOrder.push(section);
+                    }
+                    
+                    menuData[section].push({ item, description, price });
+                }
+                
+                // Function to create a single menu container (A5)
+                function createMenuContainer() {
+                    const container = document.createElement('div');
+                    container.className = 'print-container';
+                    
+                    // Header
+                    const header = document.createElement('header');
+                    
+                    const logo = document.createElement('img');
+                    logo.src = 'Panaderia.png';
+                    logo.alt = 'La Panadería Gourmet';
+                    logo.className = 'logo-placeholder';
+                    header.appendChild(logo);
+                    
+                    const title = document.createElement('h1');
+                    title.textContent = 'La Panadería Gourmet';
+                    header.appendChild(title);
+                    
+                    const slogan = document.createElement('p');
+                    slogan.textContent = 'DISFRUTA NUESTROS PRODUCTOS';
+                    header.appendChild(slogan);
+                    
+                    container.appendChild(header);
+                    
+                    // Main content: two columns inside each A5
+                    const main = document.createElement('main');
+                    const columns = document.createElement('div');
+                    columns.className = 'columns';
+                    const colLeft = document.createElement('div');
+                    colLeft.className = 'col';
+                    const colRight = document.createElement('div');
+                    colRight.className = 'col';
+
+                    // Distribute sections by item count to balance column heights
+                    let leftSections = [];
+                    let rightSections = [];
+                    let leftCount = 0;
+                    let rightCount = 0;
+                    sectionOrder.forEach(section => {
+                        const count = (menuData[section] || []).length;
+                        if (leftCount <= rightCount) {
+                            leftSections.push(section);
+                            leftCount += count;
+                        } else {
+                            rightSections.push(section);
+                            rightCount += count;
+                        }
+                    });
+
+                    function buildSection(section) {
+                        const sectionEl = document.createElement('section');
+                        const heading = document.createElement('h2');
+                        heading.textContent = section;
+                        sectionEl.appendChild(heading);
+
+                        menuData[section].forEach(item => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'menu-item';
+
+                            const nameEl = document.createElement('span');
+                            nameEl.className = 'item-name';
+                            nameEl.innerHTML = item.item;
+                            if (item.description && item.description.length > 0) {
+                                nameEl.innerHTML += ` <span class="item-description">(${item.description})</span>`;
+                            }
+                            itemEl.appendChild(nameEl);
+
+                            const dotsEl = document.createElement('span');
+                            dotsEl.className = 'dots';
+                            itemEl.appendChild(dotsEl);
+
+                            const priceEl = document.createElement('span');
+                            priceEl.className = 'item-price';
+                            priceEl.textContent = '$' + item.price;
+                            itemEl.appendChild(priceEl);
+
+                            sectionEl.appendChild(itemEl);
+                        });
+
+                        return sectionEl;
+                    }
+
+                    leftSections.forEach(s => colLeft.appendChild(buildSection(s)));
+                    rightSections.forEach(s => colRight.appendChild(buildSection(s)));
+
+                    columns.appendChild(colLeft);
+                    columns.appendChild(colRight);
+                    main.appendChild(columns);
+                    container.appendChild(main);
+
+                    // Auto-scale down content if it exceeds container height
+                    function fitToHeight() {
+                        const maxTrials = 20;
+                        let scale = 1.0;
+                        let trials = 0;
+                        main.style.transformOrigin = 'top left';
+                        while (container.scrollHeight > container.clientHeight && trials < maxTrials && scale > 0.85) {
+                            scale -= 0.03;
+                            main.style.transform = `scale(${scale})`;
+                            trials++;
+                        }
+                    }
+                    fitToHeight();
+                    
+                    // Back link (only on first container)
+                    const backLink = document.createElement('div');
+                    backLink.className = 'back-link no-print';
+                    const link = document.createElement('a');
+                    link.href = 'index.html';
+                    link.textContent = '← Volver al inicio';
+                    backLink.appendChild(link);
+                    container.appendChild(backLink);
+                    
+                    return container;
+                }
+                
+                // Create two menu containers for A4 landscape layout
+                const pageWrapper = document.getElementById('pageWrapper');
+                pageWrapper.appendChild(createMenuContainer());
+                pageWrapper.appendChild(createMenuContainer());
+                
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                document.getElementById('pageWrapper').innerHTML = '<p>Error loading menu data</p>';
+            }
+        }
+        
+        loadPrintMenu();
+    </script>
+</body>
+</html>

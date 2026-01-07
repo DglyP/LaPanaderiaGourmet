@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Panadería Gourmet</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .home-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        }
+        .home-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .home-header .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        .home-header h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: #2c3e50;
+        }
+        .home-header p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .menu-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .menu-link {
+            display: block;
+            padding: 2rem 3rem;
+            background: white;
+            border: 2px solid #2c3e50;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .menu-link:hover {
+            background: #2c3e50;
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        @media (max-width: 600px) {
+            .home-header h1 {
+                font-size: 2rem;
+            }
+            .menu-links {
+                flex-direction: column;
+                width: 100%;
+            }
+            .menu-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <div class="home-header">
+            <img src="Panaderia.png" alt="La Panadería Gourmet" class="logo">
+            <h1>La Panadería Gourmet</h1>
+            <p>DISFRUTA NUESTROS PRODUCTOS</p>
+        </div>
+        <nav class="menu-links">
+            <a href="mobile-menu.html" class="menu-link">📱 Ver Menú Digital</a>
+            <a href="print-menu.html" class="menu-link">🖨️ Ver Menú para Imprimir</a>
+        </nav>
+    </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Logo Placeholder */
+.logo-placeholder {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
