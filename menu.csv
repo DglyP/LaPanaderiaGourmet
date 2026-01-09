@@ -1,28 +1,53 @@
 Section,Item,Description,Price
-Desayunos,Caldo de costilla,, 8.000
-Desayunos,Caldo de pescado,, 9.000
+Desayunos,Caldo de costilla,,8.000
+Desayunos,Caldo de pescado,,9.000
 Desayunos,Changua,,8.000
 Desayunos,Changua Campesina,,13.000
 Desayunos,Moñona con huevo,papa - yuca - carne de res - 2 huevos,15.000
 Desayunos,Calentado paisa,frijol - arroz - huevo frito,12.000
 Desayunos,Tamal,,6.000
 Desayunos,Huevos rancheros,,8.500
-Desayunos,Huevos al gusto, fritos - revueltos - cocidos - tibios,4.500
+Desayunos,Huevos al gusto,fritos - revueltos - cocidos - tibios,4.500
 Desayunos,Huevos con arroz,,6.500
 Desayunos,Desayuno completo,,16.000
-Desayunos,Desayuno especial,tamal - caldo de costilla - huevos - jugo de naranja - chocolate - pan,25.000
+Desayunos,Desayuno especial,tamal - caldo de costilla - huevos - jugo de naranja - chocolate y pan,25.000
 Bebidas Calientes,Café latte,,4.500
 Bebidas Calientes,Capuccino,,5.000
 Bebidas Calientes,Milo Caliente,,5.000
+Bebidas Calientes,Tinto,,2.000
 Bebidas Calientes,Chocolate,,3.500
 Bebidas Calientes,Aromática de frutas,,5.000
 Bebidas Calientes,Agua de panela,,1.500
 Bebidas Calientes,Agua de panela con queso y pan,,6.000
-Bebidas Frías,Sodas italianas,,10.000
 Bebidas Frías,Jugo de naranja,,5.000
-Bebidas Frías,Jugos naturales,,8.000
+Bebidas Frías,Jugos naturales en agua,,6.000
+Bebidas Frías,Jugos naturales en leche,,8.000
 Bebidas Frías,Limonada cítrica,,10.000
-Bebidas Frías,Milo,,7.000
+Bebidas Frías,Milo frio,,7.000
 Bebidas Frías,Gaseosas,,3.000
+Bebidas Frías,Jugos,,3.000
+Bebidas Frías,Agua,,2.000
 Bebidas Frías,Masato,,3.000
-Bebidas Frías,Masato + almojabana,,5.500
+De nuestra panadería,Pan de sal,hojaldrado - blandito - campesino - costeño - francés,500
+De nuestra panadería,Pan de dulce,roscones - peras - coco - maíz - nevados,600
+De nuestra panadería,Pan baguette,,3.000
+De nuestra panadería,Pan grande de queso,,5.000
+De nuestra panadería,Conchita mexicana,,2.000
+De nuestra panadería,Quesadillas,,2.500
+De nuestra panadería,Palitos de queso,,3.000
+De nuestra panadería,Pasabocas,,1.500
+De nuestra panadería,Corazones,,2.000
+De nuestra panadería,Flautas,,2.000
+De nuestra panadería,Croissant,,3.000
+De nuestra panadería,Pastel de pollo,,4.000
+De nuestra panadería,Almojabanas,,3.000
+De nuestra panadería,Pandebonos,,4.000
+De nuestra panadería,Galletas,,1.500
+De nuestra panadería,Mantecada porción,,3.000
+De nuestra panadería,Milhoja,,4.500
+De nuestra panadería,Buñuelos,,3.000
+De nuestra panadería,Empanadas,,2.000
+De nuestra panadería,Pastel de yuca,,3.000
+De nuestra panadería,Arepa de huevo,,3.000
+De nuestra panadería,Arepa asada con mantequilla,,2.000
+De nuestra panadería,Arepa rellena de queso,,2.500
